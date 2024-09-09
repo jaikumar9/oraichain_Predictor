@@ -10,7 +10,7 @@ pub enum ExecuteMsg {
     FinalizePrediction { prediction_id: u64, actual_price: i64 },
     UpdatePrice { symbol: String, new_price: Uint128 },
     StartRound { symbol: String, start_price: Uint128 },
-    EndRound { round_id: u64, end_price: Uint128 },
+    EndRound { round_id: u64 },
     PlaceBet { round_id: u64, direction: BetDirection, amount: Uint128 },
 }
 

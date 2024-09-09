@@ -4,6 +4,7 @@ use cw2::set_contract_version;
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, PredictionResponse, BetDirection};
 use crate::state::{Prediction, State, STATE, PREDICTIONS, PRICES, Round, ROUNDS, CURRENT_ROUND, Bet, BETS};
+use cosmwasm_std::Order;
 
 const CONTRACT_NAME: &str = "crates.io:crypto-predictor";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -41,10 +42,11 @@ match msg {
     ExecuteMsg::FinalizePrediction { prediction_id, actual_price } => {
         execute::finalize_prediction(deps, info, prediction_id, actual_price)
     }
-    ExecuteMsg::UpdatePrice { symbol, new_price } => {execute::update_price(deps, env, info, symbol, new_price)}
     ExecuteMsg::StartRound { symbol, start_price } => execute::start_round(deps, env, info, symbol, start_price),
-    ExecuteMsg::EndRound { round_id, end_price } => execute::end_round(deps, env, info, round_id, end_price),
+    ExecuteMsg::EndRound { round_id } => execute::end_round(deps, env, info, round_id),
     ExecuteMsg::PlaceBet { round_id, direction, amount } => execute::place_bet(deps, env, info, round_id, direction, amount),
+    ExecuteMsg::UpdatePrice { symbol, new_price } => execute::update_price(deps, env, info, symbol, new_price),
+
 }
 }
 
@@ -118,13 +120,10 @@ pub mod execute {
         symbol: String,
         new_price: Uint128,
     ) -> Result<Response, ContractError> {
-        // Check if the sender is authorized to update the price
-        // This could be a specific address or a set of authorized addresses
         if !is_authorized(deps.as_ref(), &info.sender) {
             return Err(ContractError::Unauthorized {});
         }
 
-        // Update the price for the given symbol
         PRICES.save(deps.storage, &symbol, &new_price)?;
 
         Ok(Response::new()
@@ -132,6 +131,7 @@ pub mod execute {
             .add_attribute("symbol", symbol)
             .add_attribute("new_price", new_price.to_string()))
     }
+
 
     pub fn start_round(
         deps: DepsMut,
@@ -177,40 +177,33 @@ pub mod execute {
         env: Env,
         info: MessageInfo,
         round_id: u64,
-        end_price: Uint128,
     ) -> Result<Response, ContractError> {
-        // Check if the sender is authorized to end a round
-        if !is_authorized(deps.as_ref(), &info.sender) {
-            return Err(ContractError::Unauthorized {});
-        }
-    
-        let mut round = ROUNDS.load(deps.storage, round_id)?;
-        if round.end_price.is_some() {
-            return Err(ContractError::AlreadyFinalized {});
-        }
-    
-        round.end_price = Some(end_price);
-        round.end_time = Some(env.block.time.seconds());
-        ROUNDS.save(deps.storage, round_id, &round)?;
-    
-        // Determine winners and distribute prizes
-        let total_bets = round.total_up_bets + round.total_down_bets;
-        let winning_direction = if end_price > round.start_price { BetDirection::Up } else { BetDirection::Down };
-        let winning_bets = match winning_direction {
-            BetDirection::Up => round.total_up_bets,
-            BetDirection::Down => round.total_down_bets,
+        let round = ROUNDS.load(deps.storage, round_id)?;
+        let current_price = PRICES.load(deps.storage, &round.symbol)?;
+
+        let winning_direction = if current_price > round.start_price {
+            BetDirection::Up
+        } else {
+            BetDirection::Down
         };
-    
-        // Update price in the contract state
-        PRICES.save(deps.storage, &round.symbol, &end_price)?;
-    
+
+        // Distribute rewards
+        let mut total_rewards = Uint128::zero();
+        BETS.prefix(round_id).range(deps.storage, None, None, Order::Ascending).for_each(|bet| {
+            let (_, bet) = bet.unwrap();
+            if bet.direction == winning_direction {
+                // Calculate and distribute reward
+                let reward = bet.amount * Uint128::from(2u128); // Simple 1:1 payout
+                total_rewards += reward;
+                // Send reward to bettor (implementation needed)
+            }
+        });
+
         Ok(Response::new()
             .add_attribute("action", "end_round")
             .add_attribute("round_id", round_id.to_string())
-            .add_attribute("end_price", end_price.to_string())
             .add_attribute("winning_direction", format!("{:?}", winning_direction))
-            .add_attribute("total_bets", total_bets.to_string())
-            .add_attribute("winning_bets", winning_bets.to_string()))
+            .add_attribute("total_rewards", total_rewards.to_string()))
     }
     
     pub fn place_bet(
