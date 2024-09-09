@@ -1,23 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { data, randomPrice } from "../utils/price.js";
+import { useContract } from "../hooks/useContract";
 import { FaInfoCircle, FaDollarSign, FaTrophy } from "react-icons/fa";
 import { FaArrowRightArrowLeft } from "react-icons/fa6";
-import { data } from "../utils/price.js";
 
 export default function Bet() {
     const [betAmount, setBetAmount] = useState("");
     const [selectedCrypto, setSelectedCrypto] = useState(data[0]);
     const [hasBet, setHasBet] = useState(false);
     const betDuration = 5; // 5 minutes
+    const [currentPrice, setCurrentPrice] = useState(data[0].price);
+    const [roundActive, setRoundActive] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+    const { startRound, placeBet } = useContract();
+
+    useEffect(() => {
+        let interval;
+        if (roundActive && timeLeft > 0) {
+            interval = setInterval(() => {
+                setTimeLeft((prevTime) => prevTime - 1);
+                setCurrentPrice((prevPrice) => randomPrice(prevPrice));
+            }, 1000);
+        } else if (timeLeft === 0) {
+            clearInterval(interval);
+            setRoundActive(false);
+            // End round logic here
+        }
+        return () => clearInterval(interval);
+    }, [roundActive, timeLeft]);
+
+    const handleBet = async (direction) => {
+        if (!roundActive) {
+            await startRound(selectedCrypto.name, currentPrice);
+            setRoundActive(true);
+            setTimeLeft(300);
+        }
+        await placeBet(direction, betAmount);
+        setHasBet(true);
+    };
 
     const handleBetAmountChange = (e) => {
         setBetAmount(e.target.value);
-    };
-
-    const handleBet = (direction) => {
-        console.log(
-            `Placed a ${direction} bet of ${betAmount} ${selectedCrypto.name}`
-        );
-        setHasBet(true);
     };
 
     return (

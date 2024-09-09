@@ -13,4 +13,11 @@ function randomPrice(currentPrice) {
     return Math.max(0, newPrice);
 }
 
-export { randomPrice, data };
+function updateDataPrice(symbol, newPrice) {
+    const index = data.findIndex(item => item.name === symbol);
+    if (index !== -1) {
+        data[index].price = newPrice;
+    }
+}
+
+export { randomPrice, data,updateDataPrice };
