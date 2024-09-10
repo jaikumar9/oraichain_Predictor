@@ -1,8 +1,22 @@
-# Build results
+# Build and output directories
 /target
 /schema
+/dist
+/dist-ssr
 
-# Cargo+Git helper file (https://github.com/rust-lang/cargo/blob/0.44.1/src/cargo/sources/git/utils.rs#L320-L327)
+# Dependencies
+/node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Cargo+Git helper file
 .cargo-ok
 
 # Text file backups
@@ -11,6 +25,17 @@
 # macOS
 .DS_Store
 
-# IDEs
-*.iml
+# IDEs and editors
+.vscode/*
+!.vscode/extensions.json
 .idea
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Misc
+*.local
+.env

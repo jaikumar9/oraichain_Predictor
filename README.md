@@ -1,40 +1,118 @@
-# Oraichain Predictor
+# Crypto Predictor
 
-This project is a decentralized application (dApp) built on the Oraichain blockchain, which combines React for the frontend and CosmWasm smart contracts written in Rust for the backend.
+Crypto Predictor is a decentralized prediction market platform built on the Axelar network using CosmWasm smart contracts. It allows users to create, participate, and win in various cryptocurrency price prediction markets.
 
-## Overview
+## Features
 
-The Oraichain Predictor dApp allows users to create and participate in prediction markets. Users can create new prediction markets by deploying smart contracts, and other users can then interact with these contracts to place bets on the outcomes of various events.
+- Decentralized Markets: Create and participate in fully decentralized prediction markets.
+- Blockchain Security: All transactions and predictions are secured on the blockchain.
+- Smart Contract Integration: Powered by CosmWasm smart contracts written in Rust for robust backend operations.
+- User-Friendly Interface: Built with React and Vite for a smooth and responsive user experience.
 
-The frontend is built with React and Vite, providing a modern and efficient development environment. The backend consists of CosmWasm smart contracts written in Rust, which are deployed and executed on the Oraichain blockchain.
+## Project Structure
 
-## Folder Structure
+- `smart-contract/`: CosmWasm smart contract
+- `deploy/`: Deployment scripts for the smart contract
+- `client/`: Frontend React application
 
-- `smart-contract/`: This directory contains the Rust source code for the CosmWasm smart contracts that power the prediction markets.
-- `src/`: This directory contains the React source code for the frontend application.
+## Smart Contract
 
-## Getting Started
+### Prerequisites
 
-To get started with the project, follow these steps:
+- Rust 1.58.1+
+- `wasm32-unknown-unknown` target
+- [cargo-generate](https://github.com/ashleygwilliams/cargo-generate)
+- [cargo-run-script](https://github.com/JoshMcguigan/cargo-run-script)
 
-1. Install the required dependencies:
-   - Rust and Cargo (for smart contract development)
-   - Node.js and npm (for frontend development)
+### Building
 
-2. Build and deploy the smart contracts:
-   - Follow the instructions in the `smart-contract/README.md` file to compile and deploy the smart contracts to the Oraichain blockchain.
+To build the contract, run:
 
-3. Start the frontend development server:
-   - Navigate to the `src/` directory.
-   - Run `npm install` to install the frontend dependencies.
-   - Run `npm run dev` to start the Vite development server.
+```sh
+cd smart-contract
+cargo build --lib --release --target wasm32-unknown-unknown
+```
 
-4. Access the application by visiting `http://localhost:3000` in your web browser.
+### Testing
+Run the unit tests with:
 
-## Contributing
+```sh
+cargo test
+```
 
-Contributions to the Oraichain Predictor project are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the project's GitHub repository.
+### Generating Schema
+Generate the JSON schema files with:
 
-## License
+```sh
+cargo run --bin schema
+```
 
-This project is licensed under the [MIT License](LICENSE).
+## Deployment
+### Prerequisites
+1. Node.js
+2. npm
+3. A .env file with MNEMONIC and RPC variables set
+4. The predictor.wasm file in the project root
+
+### Installation
+
+1. Navigate to the deploy directory
+2. Install dependencies:
+```sh
+npm install
+```
+
+### Configuration
+Create a .env file in the deploy directory with the following content:
+```sh
+MNEMONIC=your_wallet_mnemonic
+RPC=your_rpc_endpoint
+```
+
+### Usage
+To deploy the contract, run:
+```sh
+node index.js
+```
+
+## Frontend Client
+### Setup
+1. Navigate to the client directory
+2. Install dependencies:
+```sh
+npm install
+```
+
+3. Create a .env file in the client directory with the following variables:
+```sh
+VITE_MNEMONIC=your_mnemonic_here 
+VITE_RPC=your_rpc_endpoint_here
+```
+
+4. Start the development server:
+```sh
+npm run dev
+```
+
+### Usage
+1. Connect your wallet using the "Connect Wallet" button in the Game component.
+2. Navigate to the Bet component to place bets on cryptocurrency price movements.
+3. Select a cryptocurrency, enter your bet amount, and choose to bet UP or DOWN.
+4. Wait for the round to end and see if you've won!
+
+### Smart Contract Interaction
+The useContract hook provides functions to interact with the smart contract:
+
+1. submitPrediction: Submit a new prediction
+2. finalizePrediction: Finalize a prediction with the actual price
+3. updatePrice: Update the price of a cryptocurrency
+4. startRound: Start a new betting round
+5. endRound: End a betting round
+6. placeBet: Place a bet on a round
+7. getPrediction: Get details of a specific prediction
+
+### Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### License
+This project is open source and available under the MIT License.

@@ -11,4 +11,7 @@ pub enum ContractError {
 
     #[error("Prediction already finalized")]
     AlreadyFinalized {},
+
+    #[error("Invalid funds")]
+    InvalidFunds {},
 }
