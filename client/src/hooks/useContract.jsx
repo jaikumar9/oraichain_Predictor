@@ -14,8 +14,8 @@ import { useState, useEffect } from "react";
 
 const mnemonic = import.meta.env.VITE_MNEMONIC;
 const rpcEndpoint = import.meta.env.VITE_RPC;
-const prefix = "orai";
-const contractAddress = "your_contract_address_here"; // Replace with your actual contract address
+const prefix = "osmo";
+const contractAddress = "osmo1267x763rw309vucal2d8fzn9tlcf262wqzt8ljnk6j3l6ph2lrhq2lvfj6"; // Replace with your actual contract address
 
 export function useContract() {
     const [client, setClient] = useState(null);
@@ -32,7 +32,7 @@ export function useContract() {
                 rpcEndpoint,
                 wallet,
                 {
-                    gasPrice: GasPrice.fromString("0.0025orai"),
+                    gasPrice: GasPrice.fromString("0.0025osmo"),
                 }
             );
             setClient(client);
@@ -84,6 +84,11 @@ export function useContract() {
             "auto"
         );
         assertIsBroadcastTxSuccess(result);
+        // Update the data array
+        const index = data.findIndex(crypto => crypto.name === symbol);
+        if (index !== -1) {
+            data[index].price = newPrice;
+        }
         return result;
     }
 
@@ -122,7 +127,7 @@ export function useContract() {
             msg,
             "auto",
             undefined,
-            [{ denom: "orai", amount: amount }]
+            [{ denom: "osmo", amount: amount }]
         );
         assertIsBroadcastTxSuccess(result);
         return result;

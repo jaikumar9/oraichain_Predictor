@@ -14,21 +14,6 @@ export default function Bet() {
     const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
     const { startRound, placeBet } = useContract();
 
-    useEffect(() => {
-        let interval;
-        if (roundActive && timeLeft > 0) {
-            interval = setInterval(() => {
-                setTimeLeft((prevTime) => prevTime - 1);
-                setCurrentPrice((prevPrice) => randomPrice(prevPrice));
-            }, 1000);
-        } else if (timeLeft === 0) {
-            clearInterval(interval);
-            setRoundActive(false);
-            // End round logic here
-        }
-        return () => clearInterval(interval);
-    }, [roundActive, timeLeft]);
-
     const handleBet = async (direction) => {
         if (!roundActive) {
             await startRound(selectedCrypto.name, currentPrice);
@@ -38,6 +23,28 @@ export default function Bet() {
         await placeBet(direction, betAmount);
         setHasBet(true);
     };
+    
+    useEffect(() => {
+        let interval;
+        if (roundActive && timeLeft > 0) {
+            interval = setInterval(() => {
+                setTimeLeft((prevTime) => prevTime - 1);
+                setCurrentPrice((prevPrice) => {
+                    const newPrice = randomPrice(prevPrice);
+                    updatePrice(selectedCrypto.name, newPrice);
+                    return newPrice;
+                });
+            }, 1000);
+        } else if (timeLeft === 0) {
+            clearInterval(interval);
+            setRoundActive(false);
+            endRound(selectedCrypto.name, currentPrice);
+            // Check if user won and distribute rewards
+            // You'll need to implement this logic
+        }
+        return () => clearInterval(interval);
+    }, [roundActive, timeLeft]);
+    
 
     const handleBetAmountChange = (e) => {
         setBetAmount(e.target.value);

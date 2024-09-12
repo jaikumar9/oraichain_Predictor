@@ -11,13 +11,13 @@ const contractWasmPath = "./predictor.wasm";
 async function deploy() {
   // Step 1: Set up wallet and client
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
-    prefix: "axelar", // Change it to the preferred chain's prefix of wallet address
+    prefix: "osmo", // Change it to the preferred chain's prefix of wallet address
   });
   const [account] = await wallet.getAccounts();
   console.log(`Wallet address: ${account.address}`);
 
   // Step 2: Connect to the blockchain
-  const client = await SigningCosmWasmClient.connectWithSigner(rpcEndpoint, wallet, { gasPrice: GasPrice.fromString('0.0025mantra')}); // Change it to the preferred chain's prefix of native token name
+  const client = await SigningCosmWasmClient.connectWithSigner(rpcEndpoint, wallet, { gasPrice: GasPrice.fromString('0.025osmo')}); // Change it to the preferred chain's prefix of native token name
   console.log("Connected to blockchain");
 
   // Step 3: Upload contract 
