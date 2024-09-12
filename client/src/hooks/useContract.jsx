@@ -15,7 +15,8 @@ import { useState, useEffect } from "react";
 const mnemonic = import.meta.env.VITE_MNEMONIC;
 const rpcEndpoint = import.meta.env.VITE_RPC;
 const prefix = "osmo";
-const contractAddress = "osmo1267x763rw309vucal2d8fzn9tlcf262wqzt8ljnk6j3l6ph2lrhq2lvfj6"; // Replace with your actual contract address
+const contractAddress =
+    "osmo1267x763rw309vucal2d8fzn9tlcf262wqzt8ljnk6j3l6ph2lrhq2lvfj6"; // Replace with your actual contract address
 
 export function useContract() {
     const [client, setClient] = useState(null);
@@ -40,6 +41,12 @@ export function useContract() {
         }
         connect();
     }, []);
+
+    async function getBalance() {
+        if (!client || !address) return "0";
+        const balance = await client.getBalance(address, "osmo");
+        return balance.amount;
+    }
 
     async function submitPrediction(symbol, prediction, betAmount) {
         if (!client || !address) return;
@@ -85,7 +92,7 @@ export function useContract() {
         );
         assertIsBroadcastTxSuccess(result);
         // Update the data array
-        const index = data.findIndex(crypto => crypto.name === symbol);
+        const index = data.findIndex((crypto) => crypto.name === symbol);
         if (index !== -1) {
             data[index].price = newPrice;
         }
@@ -150,5 +157,6 @@ export function useContract() {
         endRound,
         placeBet,
         getPrediction,
+        getBalance,
     };
 }

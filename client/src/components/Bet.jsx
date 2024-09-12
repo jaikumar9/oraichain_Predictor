@@ -12,7 +12,8 @@ export default function Bet() {
     const [currentPrice, setCurrentPrice] = useState(data[0].price);
     const [roundActive, setRoundActive] = useState(false);
     const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
-    const { startRound, placeBet } = useContract();
+    const [balance, setBalance] = useState("0");
+    const { startRound, placeBet, getBalance } = useContract();
 
     const handleBet = async (direction) => {
         if (!roundActive) {
@@ -23,7 +24,15 @@ export default function Bet() {
         await placeBet(direction, betAmount);
         setHasBet(true);
     };
-    
+
+    useEffect(() => {
+        async function fetchBalance() {
+            const userBalance = await getBalance();
+            setBalance(userBalance);
+        }
+        fetchBalance();
+    }, [getBalance]);
+
     useEffect(() => {
         let interval;
         if (roundActive && timeLeft > 0) {
@@ -44,7 +53,6 @@ export default function Bet() {
         }
         return () => clearInterval(interval);
     }, [roundActive, timeLeft]);
-    
 
     const handleBetAmountChange = (e) => {
         setBetAmount(e.target.value);
@@ -93,9 +101,11 @@ export default function Bet() {
                     </div>
                     <div className="flex items-center">
                         <span className="font-bold mr-2">
-                            Price:{" "}{selectedCrypto.price}
+                            Price: {selectedCrypto.price}
                         </span>
-                        <span className="text-gray-500">Balance: 0</span>
+                        <span className="text-gray-500">
+                            Balance: {balance} ORAI
+                        </span>
                     </div>
                 </div>
                 <input
