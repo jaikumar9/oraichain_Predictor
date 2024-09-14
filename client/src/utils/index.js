@@ -1,4 +1,4 @@
 import { connectWallet } from "./wallet";
-import { randomPrice, data,updateDataPrice } from "./price";
+import { randomPrice, data, updateDataPrice } from "./price";
 
-export { connectWallet, randomPrice, data,updateDataPrice };
+export { connectWallet, randomPrice, data, updateDataPrice };

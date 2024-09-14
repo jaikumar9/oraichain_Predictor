@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { data, randomPrice } from "../utils/price.js";
+import { data, randomPrice, updateDataPrice } from "../utils";
 import { useContract } from "../hooks/useContract";
 import { FaInfoCircle, FaDollarSign, FaTrophy } from "react-icons/fa";
 import { FaArrowRightArrowLeft } from "react-icons/fa6";
@@ -16,13 +16,18 @@ export default function Bet() {
     const { startRound, placeBet, getBalance } = useContract();
 
     const handleBet = async (direction) => {
-        if (!roundActive) {
-            await startRound(selectedCrypto.name, currentPrice);
-            setRoundActive(true);
-            setTimeLeft(300);
+        try {
+            if (!roundActive) {
+                await startRound(selectedCrypto.name, currentPrice);
+                setRoundActive(true);
+                setTimeLeft(300);
+            }
+            await placeBet(direction, betAmount);
+            setHasBet(true);
+        } catch (error) {
+            console.error("Error placing bet:", error);
+            // Handle the error appropriately (e.g., show an error message to the user)
         }
-        await placeBet(direction, betAmount);
-        setHasBet(true);
     };
 
     useEffect(() => {
@@ -40,7 +45,7 @@ export default function Bet() {
                 setTimeLeft((prevTime) => prevTime - 1);
                 setCurrentPrice((prevPrice) => {
                     const newPrice = randomPrice(prevPrice);
-                    updatePrice(selectedCrypto.name, newPrice);
+                    updateDataPrice(selectedCrypto.name, newPrice);
                     return newPrice;
                 });
             }, 1000);
