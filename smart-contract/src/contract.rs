@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 use cosmwasm_std::{entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, Coin, Uint128};
 
 use cw2::set_contract_version;
@@ -5,12 +6,27 @@ use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, PredictionResponse, BetDirection};
 use crate::state::{Prediction, State, STATE, PREDICTIONS, PRICES, Round, ROUNDS, CURRENT_ROUND, Bet, BETS};
 use cosmwasm_std::Order;
+=======
+use cosmwasm_std::{
+    entry_point, to_json_binary, Addr, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Response,
+    StdResult, Uint128,
+};
+
+use crate::error::ContractError;
+use crate::msg::{BetDirection, ExecuteMsg, InstantiateMsg, PredictionResponse, QueryMsg};
+use crate::state::{
+    Bet, Prediction, Round, State, BETS, CURRENT_ROUND, PREDICTIONS, PRICES, ROUNDS, STATE,
+};
+use cosmwasm_std::Order;
+use cw2::set_contract_version;
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 
 const CONTRACT_NAME: &str = "crates.io:crypto-predictor";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[entry_point]
 pub fn instantiate(
+<<<<<<< HEAD
 deps: DepsMut,
 _env: Env,
 info: MessageInfo,
@@ -26,10 +42,28 @@ STATE.save(deps.storage, &state)?;
 Ok(Response::new()
     .add_attribute("method", "instantiate")
     .add_attribute("owner", info.sender))
+=======
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    _msg: InstantiateMsg,
+) -> Result<Response, ContractError> {
+    let state = State {
+        owner: info.sender.clone(),
+        total_predictions: 0,
+    };
+    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+    STATE.save(deps.storage, &state)?;
+
+    Ok(Response::new()
+        .add_attribute("method", "instantiate")
+        .add_attribute("owner", info.sender))
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 }
 
 #[entry_point]
 pub fn execute(
+<<<<<<< HEAD
 deps: DepsMut,
 env: Env,
 info: MessageInfo,
@@ -48,16 +82,55 @@ match msg {
     ExecuteMsg::UpdatePrice { symbol, new_price } => execute::update_price(deps, env, info, symbol, new_price),
 
 }
+=======
+    deps: DepsMut,
+    env: Env,
+    info: MessageInfo,
+    msg: ExecuteMsg,
+) -> Result<Response, ContractError> {
+    match msg {
+        ExecuteMsg::SubmitPrediction {
+            symbol,
+            prediction,
+            bet_amount,
+        } => execute::submit_prediction(deps, info, symbol, prediction, bet_amount),
+        ExecuteMsg::FinalizePrediction {
+            prediction_id,
+            actual_price,
+        } => execute::finalize_prediction(deps, info, prediction_id, actual_price),
+        ExecuteMsg::StartRound {
+            symbol,
+            start_price,
+        } => execute::start_round(deps, env, info, symbol, start_price),
+        ExecuteMsg::EndRound { round_id } => execute::end_round(deps, env, info, round_id),
+        ExecuteMsg::PlaceBet {
+            round_id,
+            direction,
+            amount,
+        } => execute::place_bet(deps, env, info, round_id, direction, amount),
+        ExecuteMsg::UpdatePrice { symbol, new_price } => {
+            execute::update_price(deps, env, info, symbol, new_price)
+        }
+    }
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 }
 
 pub mod execute {
     use super::*;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
     pub fn submit_prediction(
         deps: DepsMut,
         info: MessageInfo,
         symbol: String,
+<<<<<<< HEAD
         prediction: i64,  // price prediction in cents
+=======
+        prediction: i64, // price prediction in cents
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
         bet_amount: Coin,
     ) -> Result<Response, ContractError> {
         let state = STATE.load(deps.storage)?;
@@ -132,7 +205,10 @@ pub mod execute {
             .add_attribute("new_price", new_price.to_string()))
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
     pub fn start_round(
         deps: DepsMut,
         env: Env,
@@ -144,10 +220,17 @@ pub mod execute {
         if !is_authorized(deps.as_ref(), &info.sender) {
             return Err(ContractError::Unauthorized {});
         }
+<<<<<<< HEAD
     
         let mut state = STATE.load(deps.storage)?;
         let round_id = state.total_predictions + 1;
     
+=======
+
+        let mut state = STATE.load(deps.storage)?;
+        let round_id = state.total_predictions + 1;
+
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
         let new_round = Round {
             id: round_id,
             symbol: symbol.clone(),
@@ -158,6 +241,7 @@ pub mod execute {
             total_up_bets: Uint128::zero(),
             total_down_bets: Uint128::zero(),
         };
+<<<<<<< HEAD
     
         ROUNDS.save(deps.storage, round_id, &new_round)?;
         CURRENT_ROUND.save(deps.storage, &round_id)?;
@@ -165,12 +249,22 @@ pub mod execute {
         state.total_predictions += 1;
         STATE.save(deps.storage, &state)?;
     
+=======
+
+        ROUNDS.save(deps.storage, round_id, &new_round)?;
+        CURRENT_ROUND.save(deps.storage, &round_id)?;
+
+        state.total_predictions += 1;
+        STATE.save(deps.storage, &state)?;
+
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
         Ok(Response::new()
             .add_attribute("action", "start_round")
             .add_attribute("round_id", round_id.to_string())
             .add_attribute("symbol", symbol)
             .add_attribute("start_price", start_price.to_string()))
     }
+<<<<<<< HEAD
     
     pub fn end_round(
         deps: DepsMut,
@@ -179,6 +273,16 @@ pub mod execute {
         round_id: u64,
     ) -> Result<Response, ContractError> {
         let round = ROUNDS.load(deps.storage, round_id)?;
+=======
+
+    pub fn end_round(
+        deps: DepsMut,
+        _env: Env,
+        _info: MessageInfo,
+        round_id: u64,
+    ) -> Result<Response, ContractError> {
+        let round: Round = ROUNDS.load(deps.storage, round_id)?;
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
         let current_price = PRICES.load(deps.storage, &round.symbol)?;
 
         let winning_direction = if current_price > round.start_price {
@@ -188,6 +292,7 @@ pub mod execute {
         };
 
         // Distribute rewards
+<<<<<<< HEAD
         let mut total_rewards = Uint128::zero();
         BETS.prefix(round_id).range(deps.storage, None, None, Order::Ascending).for_each(|bet| {
             let (_, bet) = bet.unwrap();
@@ -198,6 +303,20 @@ pub mod execute {
                 // Send reward to bettor (implementation needed)
             }
         });
+=======
+        let mut total_rewards: Uint128 = Uint128::zero();
+        BETS.prefix(round_id)
+            .range(deps.storage, None, None, Order::Ascending)
+            .for_each(|bet: Result<(Addr, Bet), cosmwasm_std::StdError>| {
+                let (_, bet) = bet.unwrap();
+                if bet.direction == winning_direction {
+                    // Calculate and distribute reward
+                    let reward: Uint128 = bet.amount * Uint128::from(2u128); // Simple 1:1 payout
+                    total_rewards += reward;
+                    // Send reward to bettor (implementation needed)
+                }
+            });
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 
         Ok(Response::new()
             .add_attribute("action", "end_round")
@@ -205,7 +324,11 @@ pub mod execute {
             .add_attribute("winning_direction", format!("{:?}", winning_direction))
             .add_attribute("total_rewards", total_rewards.to_string()))
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
     pub fn place_bet(
         deps: DepsMut,
         _env: Env,
@@ -215,6 +338,7 @@ pub mod execute {
         amount: Uint128,
     ) -> Result<Response, ContractError> {
         let mut round = ROUNDS.load(deps.storage, round_id)?;
+<<<<<<< HEAD
         if round.end_time.is_some() {
             return Err(ContractError::AlreadyFinalized {});
         }
@@ -225,13 +349,40 @@ pub mod execute {
             return Err(ContractError::InvalidFunds {});
         }
     
+=======
+        if amount.is_zero() {
+            return Err(ContractError::InvalidFunds {});
+        }
+        if round.end_time.is_some() {
+            return Err(ContractError::AlreadyFinalized {});
+        }
+
+        // Ensure the sent funds match the bet amount
+        let sent_funds = info
+            .funds
+            .iter()
+            .find(|coin| coin.denom == "token")
+            .ok_or(ContractError::InvalidFunds {})?;
+        if sent_funds.amount != amount {
+            return Err(ContractError::InvalidFunds {});
+        }
+
+        if amount.is_zero() {
+            return Err(ContractError::InvalidFunds {});
+        }
+
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
         // Update round bets
         match direction {
             BetDirection::Up => round.total_up_bets += amount,
             BetDirection::Down => round.total_down_bets += amount,
         }
         ROUNDS.save(deps.storage, round_id, &round)?;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
         // Save the individual bet
         let bet = Bet {
             round_id,
@@ -240,7 +391,11 @@ pub mod execute {
             amount,
         };
         BETS.save(deps.storage, (round_id, info.sender.clone()), &bet)?;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
         Ok(Response::new()
             .add_attribute("action", "place_bet")
             .add_attribute("round_id", round_id.to_string())
@@ -248,7 +403,10 @@ pub mod execute {
             .add_attribute("direction", format!("{:?}", direction))
             .add_attribute("amount", amount.to_string()))
     }
+<<<<<<< HEAD
     
+=======
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 }
 
 // Helper function to check if an address is authorized to update prices
@@ -260,7 +418,13 @@ fn is_authorized(_deps: Deps, _address: &Addr) -> bool {
 #[entry_point]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
+<<<<<<< HEAD
         QueryMsg::GetPrediction { prediction_id } => to_json_binary(&query::get_prediction(deps, prediction_id)?),
+=======
+        QueryMsg::GetPrediction { prediction_id } => {
+            to_json_binary(&query::get_prediction(deps, prediction_id)?)
+        }
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
     }
 }
 
@@ -279,4 +443,8 @@ pub mod query {
             actual_price: prediction.actual_price,
         })
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e

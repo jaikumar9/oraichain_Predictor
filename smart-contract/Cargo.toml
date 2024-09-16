@@ -30,6 +30,7 @@ optimize = """docker run --rm -v "$(pwd)":/code \
   --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
   cosmwasm/optimizer:0.15.0
 """
+<<<<<<< HEAD
 
 [dependencies]
 cosmwasm-schema = "2.1.0"
@@ -38,6 +39,15 @@ cosmwasm-std = { version = "2.1.0", features = [
   # Enable this if you only deploy to chains that have CosmWasm 2.0 or higher
   # "cosmwasm_2_0",
 ] }
+=======
+wasm = "build --release --lib --target wasm32-unknown-unknown"
+unit-test = "test --lib"
+schema = "run --bin schema"
+
+[dependencies]
+cosmwasm-schema = "2.1.0"
+cosmwasm-std = { version = "2.1.0" }
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 cw-storage-plus = "2.0.0"
 cw2 = "2.0.0"
 schemars = "0.8.16"

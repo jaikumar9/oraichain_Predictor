@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "deploy",
   "version": "1.0.0",
   "description": "",
@@ -16,4 +17,29 @@
     "@cosmjs/stargate": "^0.32.4",
     "dotenv": "^16.4.5"
   }
+=======
+    "name": "deploy",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node --loader ts-node/esm index.mts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@cosmjs/cosmwasm-stargate": "^0.32.4",
+        "@cosmjs/launchpad": "^0.27.1",
+        "@cosmjs/proto-signing": "^0.32.4",
+        "@cosmjs/stargate": "^0.32.4",
+        "dotenv": "^16.4.5"
+    },
+    "devDependencies": {
+        "ts-node": "^10.9.1",
+        "typescript": "^5.4.5"
+    }
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 }
