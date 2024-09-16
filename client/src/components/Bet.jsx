@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { data, randomPrice } from "../utils/price.js";
+=======
+import { data, randomPrice, updateDataPrice } from "../utils";
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 import { useContract } from "../hooks/useContract";
 import { FaInfoCircle, FaDollarSign, FaTrophy } from "react-icons/fa";
 import { FaArrowRightArrowLeft } from "react-icons/fa6";
@@ -12,23 +16,66 @@ export default function Bet() {
     const [currentPrice, setCurrentPrice] = useState(data[0].price);
     const [roundActive, setRoundActive] = useState(false);
     const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+<<<<<<< HEAD
     const { startRound, placeBet } = useContract();
+=======
+    const [balance, setBalance] = useState("0");
+    const { startRound, placeBet, getBalance } = useContract();
+
+    const handleBet = async (direction) => {
+        try {
+            if (!roundActive) {
+                await startRound(selectedCrypto.name, currentPrice);
+                setRoundActive(true);
+                setTimeLeft(300);
+            }
+            await placeBet(direction, betAmount);
+            setHasBet(true);
+        } catch (error) {
+            console.error("Error placing bet:", error);
+            // Handle the error appropriately (e.g., show an error message to the user)
+        }
+    };
+
+    useEffect(() => {
+        async function fetchBalance() {
+            const userBalance = await getBalance();
+            setBalance(userBalance);
+        }
+        fetchBalance();
+    }, [getBalance]);
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 
     useEffect(() => {
         let interval;
         if (roundActive && timeLeft > 0) {
             interval = setInterval(() => {
                 setTimeLeft((prevTime) => prevTime - 1);
+<<<<<<< HEAD
                 setCurrentPrice((prevPrice) => randomPrice(prevPrice));
+=======
+                setCurrentPrice((prevPrice) => {
+                    const newPrice = randomPrice(prevPrice);
+                    updateDataPrice(selectedCrypto.name, newPrice);
+                    return newPrice;
+                });
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
             }, 1000);
         } else if (timeLeft === 0) {
             clearInterval(interval);
             setRoundActive(false);
+<<<<<<< HEAD
             // End round logic here
+=======
+            endRound(selectedCrypto.name, currentPrice);
+            // Check if user won and distribute rewards
+            // You'll need to implement this logic
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
         }
         return () => clearInterval(interval);
     }, [roundActive, timeLeft]);
 
+<<<<<<< HEAD
     const handleBet = async (direction) => {
         if (!roundActive) {
             await startRound(selectedCrypto.name, currentPrice);
@@ -39,6 +86,8 @@ export default function Bet() {
         setHasBet(true);
     };
 
+=======
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
     const handleBetAmountChange = (e) => {
         setBetAmount(e.target.value);
     };
@@ -86,9 +135,17 @@ export default function Bet() {
                     </div>
                     <div className="flex items-center">
                         <span className="font-bold mr-2">
+<<<<<<< HEAD
                             Price:{" "}{selectedCrypto.price}
                         </span>
                         <span className="text-gray-500">Balance: 0</span>
+=======
+                            Price: {selectedCrypto.price}
+                        </span>
+                        <span className="text-gray-500">
+                            Balance: {balance} ORAI
+                        </span>
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
                     </div>
                 </div>
                 <input

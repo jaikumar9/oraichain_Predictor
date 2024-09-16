@@ -3,7 +3,11 @@ const connectWallet = async () => {
         throw new Error("Please install Keplr extension");
     }
 
+<<<<<<< HEAD
     const chainId = "injective-1";
+=======
+    const chainId = "osmo-test-5";
+>>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
     const keplr = await getKeplr();
 
     if (keplr) {
