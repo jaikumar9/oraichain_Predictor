@@ -14,18 +14,10 @@ function randomPrice(currentPrice) {
 }
 
 function updateDataPrice(symbol, newPrice) {
-<<<<<<< HEAD
-    const index = data.findIndex(item => item.name === symbol);
-=======
     const index = data.findIndex((item) => item.name === symbol);
->>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
     if (index !== -1) {
         data[index].price = newPrice;
     }
 }
 
-<<<<<<< HEAD
-export { randomPrice, data,updateDataPrice };
-=======
 export { randomPrice, data, updateDataPrice };
->>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e

@@ -31,7 +31,7 @@ RPC=axelar_rpc_endpoint
 To deploy the contract, run:
 
 ```sh
-node index.js
+npm run start
 ```
 
 This script will:

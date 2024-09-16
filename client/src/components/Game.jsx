@@ -2,17 +2,11 @@ import React, { useState } from "react";
 import { connectWallet } from "../utils";
 import Bet from "./Bet";
 import Footer from "./Footer";
-<<<<<<< HEAD
-
-function Game() {
-    const [connectionStatus, setConnectionStatus] = useState("disconnected");
-=======
 import { useContract } from "../hooks/useContract";
 
 function Game() {
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const { address } = useContract();
->>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
 
     const handleConnectWallet = async () => {
         setConnectionStatus("connecting");
@@ -50,9 +44,6 @@ function Game() {
                                 {connectionStatus === "connecting" &&
                                     "Connecting..."}
                                 {connectionStatus === "connected" &&
-<<<<<<< HEAD
-                                    "Connected"}
-=======
                                     `Connected: ${
                                         address
                                             ? `${address.slice(
@@ -61,7 +52,6 @@ function Game() {
                                               )}...${address.slice(-4)}`
                                             : ""
                                     }`}
->>>>>>> ad1779e138ae6b6e2f8b8729473b8d793121466e
                             </button>
                         </div>
                     </div>
